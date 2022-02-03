@@ -1,0 +1,40 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+env:
+  version: "3.22.1"
+jobs:
+  container_build:
+    # The host should always be linux
+    runs-on: ubuntu-latest
+    name: ${{matrix.distro}}-${{matrix.arch}}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+         - bullseye
+        arch:
+          - aarch64
+          - armv7
+          - armv6
+          - ppc64le
+          - s390x
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - uses: uraimo/run-on-arch-action@v2.1.1
+        name: Build
+        id: build
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+          githubToken: ${{ github.token }}
+          setup: mkdir -p "${PWD}/artifacts"
+          dockerRunArgs: --volume "${PWD}/artifacts:/artifacts"
+          shell: /bin/sh
+          run: |
+            uname -a
