@@ -1,0 +1,18 @@
+name: TEST
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+env:
+  version: "3.22.1"
+jobs:
+  precheck:
+    name: Job Info
+    runs-on: windows-2019
+    steps:
+      - name: Run Info
+        shell: cmd
+        run: echo ${{github.event.pull_request.number}}
+
